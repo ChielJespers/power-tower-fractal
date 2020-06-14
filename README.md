@@ -6,11 +6,11 @@ Quickly generating images used by Tycho Neve in his videos: https://www.youtube.
 
 Parameters:
 
-sharpness=10000
+sharpness=10000,
 maxIter=500
 
-reStart = -0.193
-reEnd = -0.183
-imStart = 0.23
+reStart = -0.193,
+reEnd = -0.183,
+imStart = 0.23,
 imEnd = 0.24
 
