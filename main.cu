@@ -10,7 +10,7 @@
 // ------------------------
 
 // RENDERING PARAMETERS
-#define sharpness     10000                                          // number of pixels specifying PNG pngWidth
+#define sharpness     1000                                          // number of pixels specifying PNG pngWidth
 #define maxIter       500                                          // set higher for highly zoomed-in pictures
 
 // ------------------------
@@ -21,21 +21,11 @@ double imStart = 0.23;
 double imEnd = 0.24;
 
 // See the bottom of this code for a discussion of some output possibilities.
-char*   filename =   "ZoomIslesharp.png";
-
-int** make2DintArray(int arraySizeX, int arraySizeY);
-void free2DintArray(int** myArray, int arraySizeX);
-
-__device__
-double getArg(double im);
+char*   filenameF =   "video/ZoomSpiral%d.png";
+void create_frame(int iteration);
 
 __global__
-void fillColor(int n, int H, int W, int* color, int* grey, int blue) {
-  // COMPLEX DOMAIN
-  double reStart = -0.193;
-  double reEnd = -0.183;
-  double imStart = 0.23;
-  double imEnd = 0.24;
+void fillColor(int n, int H, int W, int* color, int* grey, int blue, double reStart, double reEnd, double imStart, double imEnd) {
 
   int T = blockIdx.x*blockDim.x + threadIdx.x;
   if (T >= n) return;
@@ -78,9 +68,13 @@ void fillColor(int n, int H, int W, int* color, int* grey, int blue) {
 }
 
 int main(){
+  create_frame(10000);
+}
 
+void create_frame(int iteration) {
   FILE*       outfile;                               // defined in stdio
   gdImagePtr  image;                                 // a GD image object
+  char        filename[80];
   int         i, T, x, y;                            // array subscripts
   int         blue, grey[256];       // red, all possible shades of grey
   int*        d_grey;
@@ -111,7 +105,7 @@ int main(){
   cudaMemcpy(d_grey, grey, 256*sizeof(int), cudaMemcpyHostToDevice);
 
   // Calculate power tower convergence / divergence
-  fillColor<<<(pngWidth*pngHeight+255)/256, 256>>>(N, pngHeight, pngWidth, d_color, d_grey, blue);
+  fillColor<<<(pngWidth*pngHeight+255)/256, 256>>>(N, pngHeight, pngWidth, d_color, d_grey, blue, reStart, reEnd, imStart, imEnd);
   cudaMemcpy(color, d_color, N*sizeof(int), cudaMemcpyDeviceToHost);
 
   for (T=0; T<pngWidth*pngHeight; T++) {
@@ -125,35 +119,9 @@ int main(){
   cudaFree(d_color);
   cudaFree(d_grey);
   // Finally, write the image out to a file.
+  sprintf(filename, filenameF, iteration);
   printf("Creating output file '%s'.\n", filename);
   outfile = fopen(filename, "wb");
   gdImagePng(image, outfile);
   fclose(outfile);
-}
-
-int** make2DintArray(int arraySizeX, int arraySizeY) {  
-  int** theArray;
-  theArray = (int**) malloc(arraySizeX*sizeof(int*));
-  for (int i = 0; i < arraySizeX; i++) {
-    theArray[i] = (int*) malloc(arraySizeY*sizeof(int));
-  }
-  return theArray;  
-}
-
-void free2DintArray(int** myArray, int arraySizeX) {
-  for (int i = 0; i < arraySizeX; i++){  
-    free(myArray[i]);  
-  }  
-  free(myArray);    
-}
-
-__device__
-double getArg(double im) {
-  while (im > M_PI) {
-      im -= 2*M_PI;
-  }
-  while (im <= -M_PI ) {
-      im += 2*M_PI;
-  }
-  return im;
 }
