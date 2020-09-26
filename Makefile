@@ -1,2 +1,2 @@
 all:
-	nvcc  -o powtowfrac linzoom.cu -lgd -lm -ldl
+	nvcc -g -o powtowfrac main.cu -lgd -lm -ldl

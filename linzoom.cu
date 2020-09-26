@@ -10,19 +10,19 @@
 // ------------------------
 
 // RENDERING PARAMETERS
-#define sharpness     4000                                          // number of pixels specifying PNG pngWidth
-#define maxIter       500                                          // set higher for highly zoomed-in pictures
+#define sharpness     1000                                          // number of pixels specifying PNG pngWidth
+#define maxIter       714                                          // set higher for highly zoomed-in pictures
 
 // ------------------------
 // COMPLEX DOMAIN
 double epsilon1 = 3;
-double epsilonN = .00000000001;
-double centerRe = -0.193 + 0.00458833333; // 2753/600000
-double centerIm = 0.23 + 0.00550833333; // 3305/600000
-double N = 4800;
+double epsilonN = 0.000000001; // 0.0000000015
+double centerRe = -0.0805356397367; // 2753/600000
+double centerIm = 0; // 3305/600000
+double N = 1000;
 
 // See the bottom of this code for a discussion of some output possibilities.
-char*   filenameF =   "video/ZoomSpiral%05d.png";
+char*   filenameF =   "video5/ZoomSpiral%05d.png";
 void create_frame(int iteration);
 
 __global__
@@ -69,7 +69,7 @@ void fillColor(int n, int H, int W, int* color, int* grey, int blue, double reSt
 }
 
 int main(){
-  for (int i = 4521; i <= N; i++) {
+  for (int i = 1; i <= N; i++) {
     create_frame(i);
   }
 }
@@ -138,4 +138,5 @@ void create_frame(int iteration) {
   outfile = fopen(filename, "wb");
   gdImagePng(image, outfile);
   fclose(outfile);
+  gdImageDestroy(image);
 }
