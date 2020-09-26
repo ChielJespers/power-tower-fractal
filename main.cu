@@ -10,15 +10,20 @@
 // ------------------------
 
 // RENDERING PARAMETERS
-#define sharpness     10000                                        // number of pixels specifying PNG pngWidth
-#define maxIter       500                                          // set higher for highly zoomed-in pictures
+#define sharpness     4000                                        // number of pixels specifying PNG pngWidth
+#define maxIter       10000                                          // set higher for highly zoomed-in pictures
 
 // ------------------------
 // COMPLEX DOMAIN
-double centerRe = -1;
-double centerIm = 0;
+double centerRe = -0.0805335270615;
+double centerIm = 0.000000426876074501;
 
-double epsilon = 1;
+double epsilon = 0.00000125107482035;
+
+// -0.0805335270615
+// 4.26876074501e-06
+// 1.25107482035e-06
+// 100000
 
 // See the bottom of this code for a discussion of some output possibilities.
 char*   filenameF =   "output/ZoomSpiral%d.png";
